@@ -16,49 +16,48 @@
 </head>
 <body class="bg-slate-100 text-slate-800 min-h-screen flex flex-col items-center p-4">
 
-    <!-- شريط الرأس -->
-    <header class="w-full max-w-4xl bg-gradient-to-r from-emerald-800 to-teal-900 text-white rounded-2xl p-6 shadow-lg mb-6 text-center">
+    <!-- ترويسة الصفحة -->
+    <header class="w-full max-w-3xl bg-gradient-to-r from-emerald-800 to-teal-900 text-white rounded-2xl p-6 shadow-lg mb-6 text-center">
         <h1 class="text-2xl md:text-3xl font-extrabold">ابتدائية العمرية الأهلية</h1>
-        <p class="text-teal-200 text-sm mt-1">بوابة الاستعلام السريع عن جدول المعلم • الفصل الدراسي الأول 1448هـ</p>
+        <p class="text-teal-200 text-sm mt-1">بوابة الاستعلام عن الجدول المدرسي • الفصل الدراسي الأول 1448هـ</p>
     </header>
 
-    <main class="w-full max-w-4xl flex flex-col items-center">
-        <!-- بطاقة الإدخال والبحث -->
-        <div class="no-print bg-white p-6 rounded-2xl shadow-md border border-slate-200 w-full max-w-lg mb-6">
-            <label for="teacherNum" class="block text-sm font-bold text-slate-700 mb-2 text-center">
-                أدخل رقم المعلم (من 1 إلى 26):
-            </label>
-            <div class="flex gap-2">
-                <input type="number" id="teacherNum" min="1" max="26" placeholder="رقم المعلم" 
-                    class="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:outline-none focus:border-teal-600 font-bold text-lg text-center transition">
-                <button onclick="displaySchedule()" class="bg-teal-700 hover:bg-teal-800 text-white font-bold px-6 py-3 rounded-xl transition shadow-md whitespace-nowrap active:scale-95">
+    <main class="w-full max-w-3xl flex flex-col items-center">
+        <!-- بطاقة التحقق برقم الهوية -->
+        <div class="no-print bg-white p-6 md:p-8 rounded-2xl shadow-md border border-slate-200 w-full max-w-md mb-6">
+            <div class="text-center mb-4">
+                <div class="inline-flex items-center justify-center w-12 h-12 bg-teal-50 text-teal-700 rounded-full mb-2 text-xl">
+                    🔒
+                </div>
+                <h2 class="text-base font-bold text-slate-700">تسجيل الدخول برقم الهوية</h2>
+                <p class="text-xs text-slate-500 mt-1">أدخل رقم الهوية الوطنية / الإقامة لعرض جدولك الحصصي</p>
+            </div>
+
+            <div class="space-y-3">
+                <input type="text" id="idInput" inputmode="numeric" placeholder="أدخل رقم الهوية هنا..." 
+                    class="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:outline-none focus:border-teal-600 font-bold text-lg text-center tracking-widest transition">
+                
+                <button onclick="checkIdentity()" class="w-full bg-teal-700 hover:bg-teal-800 text-white font-bold py-3.5 rounded-xl transition shadow-md active:scale-95 text-base">
                     عرض الجدول
                 </button>
             </div>
-            
-            <div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
-                <span>أو اختر اسم المعلم:</span>
-                <select id="teacherSelect" onchange="selectTeacherName(this.value)" class="bg-slate-50 border border-slate-300 rounded-lg p-1.5 text-xs text-slate-700 focus:outline-none max-w-[200px] truncate">
-                    <option value="">-- اختر الاسم --</option>
-                </select>
-            </div>
         </div>
 
-        <!-- رسالة الخطأ -->
-        <div id="errorBox" class="hidden bg-rose-50 border border-rose-200 text-rose-700 px-4 py-3 rounded-xl text-center mb-6 font-semibold text-sm w-full max-w-lg">
-            الرجاء إدخال رقم صحيح بين 1 و 26.
+        <!-- رسالة التنبيه عند إدخال رقم غير مسجل -->
+        <div id="errorBox" class="hidden bg-rose-50 border border-rose-200 text-rose-700 px-4 py-3 rounded-xl text-center mb-6 font-semibold text-xs w-full max-w-md">
+            ⚠️ رقم الهوية غير مسجل في النظام، يرجى التأكد من الرقم أو مراجعة إدارة المدرسة.
         </div>
 
-        <!-- بطاقة عرض صورة الجدول -->
+        <!-- بطاقة عرض الجدول للمصرح لهم -->
         <div id="resultCard" class="hidden print-area bg-white p-4 md:p-6 rounded-2xl shadow-lg border border-slate-200 w-full flex flex-col items-center">
             <div class="w-full flex justify-between items-center pb-4 border-b border-slate-100 mb-4">
                 <div>
-                    <span id="labelNum" class="bg-teal-700 text-white text-xs font-bold px-3 py-1 rounded-full"></span>
-                    <h2 id="labelName" class="text-xl font-bold text-slate-800 mt-1"></h2>
+                    <span class="bg-teal-700 text-white text-[11px] font-bold px-3 py-1 rounded-full">جدول المعلم المعتمد</span>
+                    <h2 id="teacherName" class="text-xl font-black text-slate-800 mt-1"></h2>
                 </div>
                 <div class="flex gap-2 no-print">
                     <a id="downloadBtn" href="#" download class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1">
-                        📥 تحميل الصورة
+                        📥 حفظ الصورة
                     </a>
                     <button onclick="window.print()" class="bg-teal-700 hover:bg-teal-800 text-white px-3 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1">
                         🖨️ طباعة
@@ -66,7 +65,7 @@
                 </div>
             </div>
 
-            <!-- مكان ظهور صورة الجدول الأصلية -->
+            <!-- عرض صورة الجدول الخاصة بالمعلم -->
             <div class="w-full flex justify-center bg-slate-50 p-2 rounded-xl border border-slate-100 overflow-hidden">
                 <img id="scheduleImage" src="" alt="جدول المعلم" class="max-w-full h-auto rounded-lg shadow-sm">
             </div>
@@ -74,66 +73,50 @@
     </main>
 
     <script>
-        const teachersList = {
-            1: "اسماعيل جودات حسن عليان",
-            2: "السيد عبدالكريم إبراهيم سيدأحمد",
-            3: "نزار الخضير",
-            4: "حسن عبدالموجود",
-            5: "علوان صالح أحمد علي",
-            6: "جلال محمد حسين قوقزه",
-            7: "عبدالحميد أنور",
-            8: "أشرف عفيفي",
-            9: "محمود حسن صميدة خميس",
-            10: "محمد فوزي ياسين شبار",
-            11: "عبدالله محمد شيخ أحمد",
-            12: "أحمد حمدي محمد السمان",
-            13: "أحمد عبدالرازق عبدالسلام هيلم",
-            14: "عبدالحكيم",
-            15: "ماهر محمود عبدالله بريص",
-            16: "عرفة عبداللطيف عبدالشافي غازي",
-            17: "احمد سعيد السيد المزين",
-            18: "إدريس",
-            19: "أسامه ابراهيم محمد أبوليله",
-            20: "عبدالله متعب عبدالله الصالح",
-            21: "صهيب عبدالرزاق محمد الموسى",
-            22: "عمر بشير مسباح الراشد",
-            23: "فواز محمد ابراهيم العقيل",
-            24: "اسامة محمد السيد الدسوقي",
-            25: "هشام بدر ابراهيم سالم",
-            26: "محمد محمد السماني"
+        // قاعدة بيانات الربط بين رقم الهوية واسم المعلم وصورة جدوله
+        const teachersDb = {
+            "2311851923": { name: "اسماعيل جودات حسن عليان", image: "images/1.jpg" },
+            "2278577362": { name: "السيد عبدالكريم إبراهيم سيدأحمد", image: "images/2.jpg" },
+            "2295651414": { name: "نزار الخضير", image: "images/3.jpg" },
+            "2330652443": { name: "حسن عبدالموجود", image: "images/4.jpg" },
+            "2277600819": { name: "علوان صالح أحمد علي", image: "images/5.jpg" },
+            "2421606423": { name: "جلال محمد حسين قوقزه", image: "images/6.jpg" },
+            "2618173674": { name: "عبدالحميد أنور", image: "images/7.jpg" },
+            "592167163":  { name: "أشرف عفيفي", image: "images/8.jpg" },
+            "2558158743": { name: "محمود حسن صميدة خميس", image: "images/9.jpg" },
+            "2261895722": { name: "محمد فوزي ياسين شبار", image: "images/10.jpg" },
+            "2278575622": { name: "عبدالله محمد شيخ أحمد", image: "images/11.jpg" },
+            "2262147057": { name: "أحمد حمدي محمد السمان", image: "images/12.jpg" },
+            "2278576349": { name: "أحمد عبدالرازق عبدالسلام هيلم", image: "images/13.jpg" },
+            "1001556516": { name: "عبدالحكيم", image: "images/14.jpg" },
+            "2393315011": { name: "ماهر محمود عبدالله بريص", image: "images/15.jpg" },
+            "2558159352": { name: "عرفة عبداللطيف عبدالشافي غازي", image: "images/16.jpg" },
+            "2210602070": { name: "احمد سعيد السيد المزين", image: "images/17.jpg" },
+            "1234567891": { name: "إدريس", image: "images/18.jpg" },
+            "2262197250": { name: "أسامه ابراهيم محمد أبوليله", image: "images/19.jpg" },
+            "1105116253": { name: "عبدالله متعب عبدالله الصالح", image: "images/20.jpg" },
+            "2126334750": { name: "صهيب عبدالرزاق محمد الموسى", image: "images/21.jpg" },
+            "1077035986": { name: "عمر بشير مسباح الراشد", image: "images/22.jpg" },
+            "1107544288": { name: "فواز محمد ابراهيم العقيل", image: "images/23.jpg" },
+            "2299884854": { name: "اسامة محمد السيد الدسوقي", image: "images/24.jpg" },
+            "2085860654": { name: "هشام بدر ابراهيم سالم", image: "images/25.jpg" },
+            "2510645068": { name: "محمد محمد السماني", image: "images/26.jpg" }
         };
 
-        // تعبئة القائمة المنسدلة
-        const select = document.getElementById('teacherSelect');
-        for (const [num, name] of Object.entries(teachersList)) {
-            let opt = document.createElement('option');
-            opt.value = num;
-            opt.textContent = `${num} - ${name}`;
-            select.appendChild(opt);
-        }
-
-        function selectTeacherName(val) {
-            if(!val) return;
-            document.getElementById('teacherNum').value = val;
-            displaySchedule();
-        }
-
-        function displaySchedule() {
-            const num = document.getElementById('teacherNum').value.trim();
+        function checkIdentity() {
+            const id = document.getElementById('idInput').value.trim();
             const errorBox = document.getElementById('errorBox');
             const resultCard = document.getElementById('resultCard');
+            const teacherName = document.getElementById('teacherName');
             const scheduleImage = document.getElementById('scheduleImage');
             const downloadBtn = document.getElementById('downloadBtn');
 
-            if (num >= 1 && num <= 26 && teachersList[num]) {
+            if (teachersDb[id]) {
+                const teacher = teachersDb[id];
                 errorBox.classList.add('hidden');
-                document.getElementById('labelNum').textContent = `معلم رقم #${num}`;
-                document.getElementById('labelName').textContent = teachersList[num];
-                
-                // مسار الصورة في مجلد images بنفس رقم الكود
-                const imagePath = `images/${num}.jpg`;
-                scheduleImage.src = imagePath;
-                downloadBtn.href = imagePath;
+                teacherName.textContent = teacher.name;
+                scheduleImage.src = teacher.image;
+                downloadBtn.href = teacher.image;
                 
                 resultCard.classList.remove('hidden');
                 resultCard.scrollIntoView({ behavior: 'smooth' });
@@ -143,8 +126,8 @@
             }
         }
 
-        document.getElementById('teacherNum').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') displaySchedule();
+        document.getElementById('idInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') checkIdentity();
         });
     </script>
 </body>
